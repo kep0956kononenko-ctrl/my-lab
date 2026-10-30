@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>crEEpie illie: The Lab 2.0</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; }
+        body { background-color: #0d0d0d; color: #e0e0e0; display: flex; flex-direction: column; min-height: 100vh; }
+        
+        header { background-color: #1a1a1a; padding: 20px; text-align: center; border-bottom: 2px solid #b30000; }
+        header h1 { color: #ffffff; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 10px #b30000; }
+        header p { color: #888; font-size: 14px; margin-top: 5px; }
+
+        nav { background-color: #151515; display: flex; justify-content: center; flex-wrap: wrap; padding: 10px; border-bottom: 1px solid #333; }
+        nav button { background: none; border: none; color: #e0e0e0; padding: 10px 20px; margin: 5px; cursor: pointer; font-size: 16px; transition: 0.3s; border-bottom: 2px solid transparent; }
+        nav button:hover, nav button.active { color: #ff3333; border-bottom: 2px solid #ff3333; text-shadow: 0 0 5px #ff3333; }
+
+        main { flex: 1; padding: 40px 20px; max-width: 900px; margin: 0 auto; width: 100%; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card { background-color: #1a1a1a; padding: 30px; border-radius: 8px; border-left: 5px solid #b30000; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .card h2 { color: #ffffff; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        
+        .btn { background-color: #b30000; color: white; border: none; padding: 10px 20px; cursor: pointer; font-size: 16px; border-radius: 4px; transition: 0.2s; margin-top: 10px; font-weight: bold; }
+        .btn:hover { background-color: #ff3333; box-shadow: 0 0 10px #ff3333; }
+        .btn:disabled { background-color: #444; cursor: not-allowed; box-shadow: none; }
+
+        /* Статистика */
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px; }
+        .stat-box { background-color: #222; padding: 20px; text-align: center; border-radius: 5px; border: 1px solid #333; }
+        .stat-box span { display: block; font-size: 32px; font-weight: bold; color: #ff3333; margin-bottom: 5px; }
+        .stat-box small { color: #888; }
+
+        /* Тест */
+        .question-block { margin-bottom: 25px; background: #222; padding: 15px; border-radius: 5px; }
+        .options { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+        .option-btn { background-color: #333; color: #e0e0e0; border: 1px solid #444; padding: 12px; text-align: left; cursor: pointer; border-radius: 4px; transition: 0.2s; font-size: 16px; }
+        .option-btn:hover { background-color: #444; }
+        .option-btn.correct { background-color: #1b5e20; border-color: #4caf50; }
+        .option-btn.wrong { background-color: #b71c1c; border-color: #f44336; }
+        .explanation { margin-top: 10px; font-size: 14px; color: #aaa; display: none; font-style: italic; }
+        #quiz-feedback { margin-top: 15px; font-weight: bold; font-size: 18px; text-align: center; }
+
+        footer { text-align: center; padding: 20px; color: #555; font-size: 12px; border-top: 1px solid #333; margin-top: 40px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>crEEpie illie</h1>
+        <p>The Training Lab v2.0</p>
+    </header>
+
+    <nav>
+        <button class="active" onclick="openTab(event, 'dashboard')">Дашборд</button>
+        <button onclick="openTab(event, 'theory')">База (Теория)</button>
+        <button onclick="openTab(event, 'practice')">Практика</button>
+        <button onclick="openTab(event, 'rap')">Рэп</button>
+    </nav>
+
+    <main>
+        <!-- ДАШБОРД -->
+        <div id="dashboard" class="tab-content active">
+            <div class="card">
+                <h2>Добро пожаловать в систему, капитан.</h2>
+                <p>Здесь ты прокачиваешь свой английский. Выполняй задания, получай XP и повышай уровень. Чем выше уровень — тем больше фишек откроется.</p>
+            </div>
+            <div class="card">
+                <h2>Твоя статистика</h2>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <span id="level-display">1</span>
+                        <small>Уровень</small>
+                    </div>
+                    <div class="stat-box">
+                        <span id="xp-display">0</span>
+                        <small>XP Опыт</small>
+                    </div>
+                    <div class="stat-box">
+                        <span id="rank-display">Новичок</span>
+                        <small>Ранг</small>
+                    </div>
+                </div>
+                <p style="margin-top: 20px; color: #888;" id="level-up-msg"></p>
+            </div>
+        </div>
+
+        <!-- ТЕОРИЯ -->
+        <div id="theory" class="tab-content">
+            <div class="card">
+                <h2>Present Simple (Простое настоящее)</h2>
+                <p><strong>Когда используем:</strong> Регулярные действия, привычки, факты.</p>
+                <p><strong>Формула:</strong> I/You/We/They + глагол. He/She/It + глагол + <b>s</b>.</p>
+                <p><strong>Пример из рэпа:</strong> "He <u>walks</u> with a limp" (У него хромающая походка).</p>
+                <button class="btn" onclick="document.querySelectorAll('nav button')[2].click()">Перейти к практике</button>
+            </div>
+        </div>
+
+        <!-- ПРАКТИКА -->
+        <div id="practice" class="tab-content">
+            <div class="card">
+                <h2>Практика: Базовые времена</h2>
+                <div id="quiz-container"></div>
+                <div id="quiz-feedback"></div>
+                <button class="btn" id="restart-btn" style="display:none;" onclick="startQuiz()">Пройти еще раз</button>
+            </div>
+        </div>
+
+        <!-- РЭП -->
+        <div id="rap" class="tab-content">
+            <div class="card">
+                <h2>Рэп-модуль (Скоро)</h2>
+                <p>Достигни 3 уровня, чтобы разблокировать первый текст.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        crEEpie illie &copy; 2026. Discipline is the key to progress.
+    </footer>
+
+    <script>
+        // --- ДАННЫЕ ДЛЯ ТЕСТА (База вопросов) ---
+        const questions = [
+            { q: "1. He _____ to the gym every day.", opts: ["go", "goes", "going"], ans: 1, exp: "He/She/It требует окончания -s." },
+            { q: "2. I _____ not eat sugar.", opts: ["does", "do", "am"], ans: 1, exp: "С I/You/We/They используем do." },
+            { q: "3. Yesterday, I _____ my finger.", opts: ["break", "broke", "broken"], ans: 1, exp: "Past Simple для завершенного действия в прошлом." },
+            { q: "4. Look! He _____ on the skatepark.", opts: ["rides", "is riding", "ride"], ans: 1, exp: "Present Continuous (is + ing) для действия прямо сейчас." },
+            { q: "5. _____ she write raps?", opts: ["Do", "Does", "Is"], ans: 1, exp: "Вопрос в Present Simple для she начинается с Does." }
+        ];
+
+        // --- ЛОГИКА ВКЛАДОК ---
+        function openTab(event, tabName) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // --- ЛОГИКА XP И УРОВНЕЙ ---
+        let xp = parseInt(localStorage.getItem('xp')) || 0;
+        
+        function updateStats() {
+            document.getElementById('xp-display').innerText = xp;
+            let level = Math.floor(xp / 100) + 1; 
+            document.getElementById('level-display').innerText = level;
+            
+            let rank = "Новичок";
+            if(level >= 2) rank = "Ученик";
+            if(level >= 3) rank = "Боец";
+            if(level >= 5) rank = "Мастер";
+            if(level >= 10) rank = "Легенда";
+            document.getElementById('rank-display').innerText = rank;
+
+            localStorage.setItem('xp', xp);
+        }
+
+        function addXP(amount) {
+            xp += amount;
+            updateStats();
+        }
+
+        // --- ЛОГИКА ТЕСТА ---
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            document.getElementById('quiz-feedback').innerText = "";
+            document.getElementById('restart-btn').style.display = "none";
+            document.getElementById('quiz-container').innerHTML = "";
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = ""; // Очистка
+            
+            if (currentQuestionIndex >= questions.length) {
+                endQuiz();
+                return;
+            }
+
+            const qData = questions[currentQuestionIndex];
+            const block = document.createElement('div');
+            block.className = 'question-block';
+            
+            block.innerHTML = `<p>${qData.q}</p>`;
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = 'options';
+
+            qData.opts.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => selectAnswer(btn, index, qData.ans, qData.exp, optionsDiv);
+                optionsDiv.appendChild(btn);
+            });
+
+            block.appendChild(optionsDiv);
+            container.appendChild(block);
+        }
+
+        function selectAnswer(selectedBtn, selectedIndex, correctIndex, explanation, optionsDiv) {
+            // Блокируем кнопки
+            const allBtns = optionsDiv.querySelectorAll('.option-btn');
+            allBtns.forEach(b => b.disabled = true);
+
+            if (selectedIndex === correctIndex) {
+                selectedBtn.classList.add('correct');
+                score++;
+                addXP(15); // Даем 15 XP
+                document.getElementById('quiz-feedback').innerText = "Верно! +15 XP";
+                document.getElementById('quiz-feedback').style.color = "#4caf50";
+            } else {
+                selectedBtn.classList.add('wrong');
+                allBtns[correctIndex].classList.add('correct'); // Показываем правильный
+                document.getElementById('quiz-feedback').innerText = "Ошибка!";
+                document.getElementById('quiz-feedback').style.color = "#f44336";
+            }
+
+            // Показываем объяснение
+            const expText = document.createElement('div');
+            expText.className = 'explanation';
+            expText.style.display = 'block';
+            expText.innerText = "Объяснение: " + explanation;
+            selectedBtn.parentElement.parentElement.appendChild(expText);
+
+            // Переход к следующему вопросу через 2 секунды
+            setTimeout(() => {
+                currentQuestionIndex++;
+                loadQuestion();
+            }, 2500);
+        }
+
+        function endQuiz() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = `<h3>Тест завершен! Твой результат: ${score} из ${questions.length}.</h3>`;
+            document.getElementById('quiz-feedback').innerText = "";
+            if (score === questions.length) {
+                addXP(50);
+                container.innerHTML += `<p style="color:gold; margin-top:10px;">Идеально! Бонус +50 XP.</p>`;
+            }
+            document.getElementById('restart-btn').style.display = "inline-block";
+        }
+
+        // Инициализация
+        updateStats();
+        startQuiz();
+
+    </script>
+</body>
+</html>n => {
+                btn.classList.remove('correct', 'wrong');
+                btn.disabled = false;
+            });
+            document.getElementById('feedback').innerText = "";
+            document.getElementById('restart-btn').style.display = "none";
+            correctAnswers = 0;
+            answeredQuestions = 0;
+        }
+    </script>
+</body>
+</html>
